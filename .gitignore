@@ -6,5 +6,4 @@ data/models
 data/input
 data/output
 
-# Ignore any files stored inside ".gitkeep" directories
-
+compose.yml
