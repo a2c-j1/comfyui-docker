@@ -8,29 +8,13 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
 
 RUN git clone https://github.com/comfyanonymous/ComfyUI.git
 WORKDIR /app/ComfyUI
-RUN pip install --no-cache-dir  -r requirements.txt
-
-# Install ComfyUI-Manager
-WORKDIR /app/ComfyUI/custom_nodes
-RUN git clone https://github.com/ltdrdata/ComfyUI-Manager.git
+RUN python -m pip install --no-cache-dir -r requirements.txt \
+    && python -m pip install --no-cache-dir uv GitPython
 
 # Create entrypoint script for optional TLS support
 WORKDIR /app
-RUN printf '%s\n' \
-    '#!/bin/sh' \
-    'set -eu' \
-    '' \
-    'cd /app/ComfyUI' \
-    'if [ ! -d /app/ComfyUI/custom_nodes/ComfyUI-Manager ]; then' \
-    '  git clone https://github.com/ltdrdata/ComfyUI-Manager.git /app/ComfyUI/custom_nodes/ComfyUI-Manager' \
-    'fi' \
-    'args="python main.py --listen 0.0.0.0"' \
-    'if [ -n "${TLS_KEYFILE:-}" ] && [ -n "${TLS_CERTFILE:-}" ] && [ -f "$TLS_KEYFILE" ] && [ -f "$TLS_CERTFILE" ]; then' \
-    '  args="$args --tls-keyfile $TLS_KEYFILE --tls-certfile $TLS_CERTFILE"' \
-    'fi' \
-    '' \
-    'exec $args' \
-    > /app/entrypoint.sh && chmod +x /app/entrypoint.sh
+COPY entrypoint.sh /app/entrypoint.sh
+RUN chmod +x /app/entrypoint.sh
 
 # Create a non-root user to run the application
 RUN groupadd -g 1000 appuser && \
