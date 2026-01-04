@@ -1,0 +1,42 @@
+services:
+  comfyui:
+    build: .
+    container_name: comfyui
+    restart: unless-stopped
+
+    ports:
+      - "8188:8188"
+
+    environment:
+      - TLS_KEYFILE=/app/ComfyUI/certs/servhostname.local.key
+      - TLS_CERTFILE=/app/ComfyUI/certs/servhostname.local.crt
+      # - CUDA_VISIBLE_DEVICES=0
+
+    volumes:
+      - ./data/custom_nodes:/app/ComfyUI/custom_nodes
+      - ./data/user:/app/ComfyUI/user
+      - ./data/models:/app/ComfyUI/models
+      - ./data/input:/app/ComfyUI/input
+      - ./data/output:/app/ComfyUI/output
+      - ./certs:/app/ComfyUI/certs
+
+    deploy:
+      resources:
+        reservations:
+          devices:
+            - driver: nvidia
+              count: all
+              capabilities: [gpu]
+
+  # self-signed SSL certificate generator
+  omgwtfssl:
+    image: paulczar/omgwtfssl
+    restart: "no"
+    volumes:
+      - ./certs:/certs
+    environment:
+      - SSL_SUBJECT=servhostname.local
+      - CA_SUBJECT=my@example.com
+      - SSL_KEY=/certs/servhostname.local.key
+      - SSL_CSR=/certs/servhostname.local.csr
+      - SSL_CERT=/certs/servhostname.local.crt
