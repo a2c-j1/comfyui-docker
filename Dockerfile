@@ -20,9 +20,12 @@ RUN printf '%s\n' \
     '#!/bin/sh' \
     'set -eu' \
     '' \
+    'cd /app/ComfyUI' \
+    'if [ ! -d /app/ComfyUI/custom_nodes/ComfyUI-Manager ]; then' \
+    '  git clone https://github.com/ltdrdata/ComfyUI-Manager.git /app/ComfyUI/custom_nodes/ComfyUI-Manager' \
+    'fi' \
     'args="python main.py --listen 0.0.0.0"' \
-    'if [ -n "${TLS_KEYFILE:-}" ] && [ -n "${TLS_CERTFILE:-}" ] \\' \
-    '   && [ -f "$TLS_KEYFILE" ] && [ -f "$TLS_CERTFILE" ]; then' \
+    'if [ -n "${TLS_KEYFILE:-}" ] && [ -n "${TLS_CERTFILE:-}" ] && [ -f "$TLS_KEYFILE" ] && [ -f "$TLS_CERTFILE" ]; then' \
     '  args="$args --tls-keyfile $TLS_KEYFILE --tls-certfile $TLS_CERTFILE"' \
     'fi' \
     '' \
