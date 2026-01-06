@@ -1,4 +1,6 @@
-certs/*
+certs/cert.pem
+certs/key.pem
+certs/san.conf
 
 data/user
 data/custom_nodes

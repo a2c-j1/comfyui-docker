@@ -17,7 +17,15 @@
 1) 証明書の生成 (初回のみ、HTTPS を使う場合):
 
 ```bash
-docker compose run --rm omgwtfssl
+cp certs/san.conf.example certs/san.conf
+```
+
+`certs/san.conf` をサーバー環境に合わせて編集 (例: `DNS.1` / `IP.1` を実際のホスト名・IP に変更) します。
+
+```bash
+openssl req -x509 -nodes -days 3650 -newkey rsa:4096 \
+  -keyout certs/key.pem -out certs/cert.pem \
+  -config certs/san.conf -extensions req_ext
 ```
 
 2) ビルドと起動:
@@ -34,18 +42,18 @@ docker compose up --build
 
 ComfyUI は以下の環境変数で証明書を参照します。
 
-- `TLS_KEYFILE` (compose 既定: `/app/ComfyUI/certs/servhostname.local.key`)
-- `TLS_CERTFILE` (compose 既定: `/app/ComfyUI/certs/servhostname.local.crt`)
+- `TLS_KEYFILE` (compose 既定: `/app/ComfyUI/certs/key.pem`)
+- `TLS_CERTFILE` (compose 既定: `/app/ComfyUI/certs/cert.pem`)
 
 両方のファイルが存在する場合は HTTPS、有効でない場合は HTTP で起動します。
 
 ## クライアント側の設定 (自己署名証明書)
 
-自己署名証明書を使う場合、クライアントで `./certs/servhostname.local.crt` を信頼する必要があります。
+自己署名証明書を使う場合、クライアントで `./certs/cert.pem` を信頼する必要があります。
 
 ### Windows (Chrome)
 
-1) `./certs/servhostname.local.crt` をダブルクリック  
+1) `./certs/cert.pem` をダブルクリック  
 2) 「証明書のインストール」→「ローカル コンピューター」  
 3) 「証明書をすべて次のストアに配置する」→「信頼されたルート証明機関」  
 4) 反映後、Chrome を再起動
@@ -55,7 +63,7 @@ ComfyUI は以下の環境変数で証明書を参照します。
 OS の信頼ストアに追加:
 
 ```bash
-sudo cp ./certs/servhostname.local.crt /usr/local/share/ca-certificates/comfyui-local.crt
+sudo cp ./certs/cert.pem /usr/local/share/ca-certificates/cert.pem
 sudo update-ca-certificates
 ```
 
@@ -63,12 +71,12 @@ sudo update-ca-certificates
 
 ```bash
 sudo apt-get install -y libnss3-tools
-certutil -d sql:$HOME/.pki/nssdb -A -t "C,," -n "comfyui-local" -i ./certs/servhostname.local.crt
+certutil -d sql:$HOME/.pki/nssdb -A -t "C,," -n "comfyui-local" -i ./certs/cert.pem
 ```
 
 ### iPad (Safari)
 
-1) `servhostname.local.crt` を iPad に送る (AirDrop など)  
+1) `cert.pem` を iPad に送る (AirDrop など)  
 2) 設定 → 一般 → VPN とデバイス管理 → プロファイルをインストール  
 3) 設定 → 一般 → 情報 → 証明書信頼設定 で「完全に信頼」を有効化  
 4) Safari を再起動

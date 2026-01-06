@@ -8,8 +8,8 @@ services:
       - "8188:8188"
 
     environment:
-      - TLS_KEYFILE=/app/ComfyUI/certs/servhostname.local.key
-      - TLS_CERTFILE=/app/ComfyUI/certs/servhostname.local.crt
+      - TLS_KEYFILE=/app/ComfyUI/certs/key.pem
+      - TLS_CERTFILE=/app/ComfyUI/certs/cert.pem
       # - CUDA_VISIBLE_DEVICES=0
 
     volumes:
@@ -27,17 +27,3 @@ services:
             - driver: nvidia
               count: all
               capabilities: [gpu]
-
-  # self-signed SSL certificate generator
-  # omgwtfssl:
-  #   image: paulczar/omgwtfssl
-  #   restart: "no"
-  #   user: "1000:1000"
-  #   volumes:
-  #     - ./certs:/certs
-  #   environment:
-  #     - SSL_SUBJECT=servhostname.local
-  #     - CA_SUBJECT=my@example.com
-  #     - SSL_KEY=/certs/servhostname.local.key
-  #     - SSL_CSR=/certs/servhostname.local.csr
-  #     - SSL_CERT=/certs/servhostname.local.crt
