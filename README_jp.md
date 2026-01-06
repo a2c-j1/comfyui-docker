@@ -10,7 +10,6 @@
 ## サービス構成
 
 - `comfyui`: ComfyUI 本体
-- `omgwtfssl`: 自己署名証明書の作成 (一度だけ実行し `./certs` に出力)
 
 ## クイックスタート
 
@@ -28,13 +27,19 @@ openssl req -x509 -nodes -days 3650 -newkey rsa:4096 \
   -config certs/san.conf -extensions req_ext
 ```
 
-2) ビルドと起動:
+2) compose ファイルの作成:
+
+```bash
+cp compose.yml.example compose.yml
+```
+
+3) ビルドと起動:
 
 ```bash
 docker compose up --build
 ```
 
-3) アクセス:
+4) アクセス:
 
 - https://localhost:8188
 
@@ -94,5 +99,4 @@ certutil -d sql:$HOME/.pki/nssdb -A -t "C,," -n "comfyui-local" -i ./certs/cert.
 
 ## 注意点
 
-- HTTPS を使う場合は起動前に `docker compose run --rm omgwtfssl` で
-  `./certs` に証明書を用意してください。
+- HTTPS を使う場合は起動前に `./certs` に証明書を用意してください。

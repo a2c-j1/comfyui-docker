@@ -10,7 +10,6 @@ This repo provides a Docker setup for running ComfyUI with optional TLS.
 ## Services
 
 - `comfyui`: ComfyUI application container
-- `omgwtfssl`: one-off helper to create self-signed certs (writes to `./certs`)
 
 ## Quick Start
 
@@ -29,13 +28,19 @@ openssl req -x509 -nodes -days 3650 -newkey rsa:4096 \
   -config certs/san.conf -extensions req_ext
 ```
 
-2) Build and start ComfyUI:
+2) Create the compose file:
+
+```bash
+cp compose.yml.example compose.yml
+```
+
+3) Build and start ComfyUI:
 
 ```bash
 docker compose up --build
 ```
 
-3) Access:
+4) Access:
 
 - https://localhost:8188
 
@@ -97,5 +102,4 @@ Host directories are mounted into the container:
 
 ## Notes
 
-- If you want HTTPS, generate certs into `./certs` before starting. You can
-  also use `docker compose run --rm omgwtfssl` to create certificates once.
+- If you want HTTPS, generate certs into `./certs` before starting.
