@@ -143,3 +143,17 @@ Inputs go in `./data/input`, and outputs are saved to `./data/output`.
 - If you want HTTPS, generate certs into `./certs` before starting.
 - The Dockerfile pins ComfyUI to the `v0.8.2` release tag.
 - Verified only on Ubuntu Desktop 24.02 with an RTX 5070.
+- WSL2 has not been tested.
+
+## Upstream License (ComfyUI)
+
+This repository packages and runs the upstream ComfyUI project. ComfyUI is
+licensed under GPL-3.0. Your use, modification, and distribution of ComfyUI
+are governed by its license. Please review the upstream license terms before
+redistribution.
+
+## Disclaimer
+
+This repository is provided "as is", without warranty of any kind. Use at your
+own risk. The maintainers are not responsible for any damages or losses
+resulting from use of this repository or the upstream software it runs.
