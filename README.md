@@ -60,7 +60,7 @@ docker compose up --build
 
 ## Container Registry (GHCR)
 
-Public images are published to GHCR via GitHub Actions.
+Public images are published to GHCR.
 
 - Image: `ghcr.io/a2c-j1/comfyui`
 - Tags: `latest`, `v0.8.2`
