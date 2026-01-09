@@ -11,7 +11,6 @@
 - `certs/`: TLS certificate assets (self-signed workflow in README).
 - `test/container-structure-test.yaml`: Container structure test configuration.
 - `.github/workflows/container-structure-test.yml`: CI workflow for image build + structure tests.
-- `.github/workflows/publish-ghcr.yml`: CI workflow for GHCR image publish.
 
 ## Local workflows
 - Build and run:

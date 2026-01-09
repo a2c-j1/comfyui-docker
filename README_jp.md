@@ -59,7 +59,7 @@ docker compose up --build
 
 ## Container Registry (GHCR)
 
-GitHub Actions で GHCR に public イメージを公開しています。
+GHCR に public イメージを公開しています。
 
 - イメージ: `ghcr.io/a2c-j1/comfyui`
 - タグ: `latest`, `v0.8.2`

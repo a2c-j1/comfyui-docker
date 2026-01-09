@@ -1,18 +1,15 @@
 name: container-structure-test
 
 on:
-  push:
-    paths:
-      - "Dockerfile"
-      - "entrypoint.sh"
-      - "test/container-structure-test.yaml"
-      - ".github/workflows/container-structure-test.yml"
   pull_request:
     paths:
       - "Dockerfile"
       - "entrypoint.sh"
       - "test/container-structure-test.yaml"
       - ".github/workflows/container-structure-test.yml"
+  push:
+    tags:
+      - "v*"
   workflow_dispatch:
 
 jobs:
