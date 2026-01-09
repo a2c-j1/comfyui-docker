@@ -15,7 +15,7 @@ This repo provides a Docker setup for running ComfyUI with optional TLS.
 
 - ComfyUI `v0.8.2` (pinned release tag)
 - ComfyUI Manager enabled (`--enable-manager`)
-- CUDA-enabled PyTorch runtime (NVIDIA GPU required for GPU acceleration)
+- CUDA-enabled PyTorch runtime (PyTorch 2.9.1 + CUDA 13.0; NVIDIA GPU required for GPU acceleration)
 - Optional HTTPS/TLS if `TLS_KEYFILE` and `TLS_CERTFILE` are provided
 - Data persistence via mounted volumes (`./data/*`, `./certs`)
 
@@ -155,6 +155,7 @@ Inputs go in `./data/input`, and outputs are saved to `./data/output`.
 
 - If you want HTTPS, generate certs into `./certs` before starting.
 - The Dockerfile pins ComfyUI to the `v0.8.2` release tag.
+- The base image uses PyTorch 2.9.1 with CUDA 13.0 (cudnn9 runtime).
 - Verified only on Ubuntu Desktop 24.02 with an RTX 5070.
 - WSL2 has not been tested.
 
