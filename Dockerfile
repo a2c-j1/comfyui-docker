@@ -9,7 +9,8 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
 RUN git clone https://github.com/comfyanonymous/ComfyUI.git
 WORKDIR /app/ComfyUI
 RUN python -m pip install --no-cache-dir -r requirements.txt \
-    && python -m pip install --no-cache-dir uv GitPython
+    && python -m pip install --no-cache-dir -r manager_requirements.txt \
+    && python -m pip install --no-cache-dir uv GitPython toml
 
 # Create entrypoint script for optional TLS support
 WORKDIR /app
