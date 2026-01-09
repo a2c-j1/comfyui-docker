@@ -15,7 +15,7 @@
 
 - ComfyUI `v0.8.2`（リリースタグ固定）
 - ComfyUI Manager を有効化（`--enable-manager`）
-- CUDA 対応 PyTorch ランタイム（GPU 利用には NVIDIA GPU が必要）
+- CUDA 対応 PyTorch ランタイム（PyTorch 2.9.1 + CUDA 13.0。GPU 利用には NVIDIA GPU が必要）
 - `TLS_KEYFILE` / `TLS_CERTFILE` があれば HTTPS/TLS を有効化
 - ボリュームマウントでデータ永続化（`./data/*`, `./certs`）
 
@@ -152,6 +152,7 @@ ComfyUI の想定構成に合わせて `./data/models` 配下へ配置してく�
 
 - HTTPS を使う場合は起動前に `./certs` に証明書を用意してください。
 - Dockerfile は ComfyUI のリリースタグ `v0.8.2` に固定しています。
+- ベースイメージは PyTorch 2.9.1 + CUDA 13.0（cudnn9 runtime）です。
 - 動作検証は Ubuntu Desktop 24.02 + RTX-5070 のみで行っています。
 - WSL2 での動作検証は行っていません。
 

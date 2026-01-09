@@ -19,6 +19,7 @@ services:
       - ./data/models:/app/ComfyUI/models
       - ./data/input:/app/ComfyUI/input
       - ./data/output:/app/ComfyUI/output
+      - ./data/__manager/config.ini:/app/ComfyUI/user/__manager/config.ini
       - ./certs:/app/ComfyUI/certs
 
     deploy:
