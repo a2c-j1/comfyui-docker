@@ -11,6 +11,14 @@
 
 - `comfyui`: ComfyUI 本体
 
+## このイメージで有効になる機能
+
+- ComfyUI `v0.8.2`（リリースタグ固定）
+- ComfyUI Manager を有効化（`--enable-manager`）
+- CUDA 対応 PyTorch ランタイム（GPU 利用には NVIDIA GPU が必要）
+- `TLS_KEYFILE` / `TLS_CERTFILE` があれば HTTPS/TLS を有効化
+- ボリュームマウントでデータ永続化（`./data/*`, `./certs`）
+
 ## クイックスタート
 
 1) 証明書の生成 (初回のみ、HTTPS を使う場合):
@@ -33,13 +41,19 @@ openssl req -x509 -nodes -days 3650 -newkey rsa:4096 \
 cp compose.yml.example compose.yml
 ```
 
-3) ビルドと起動:
+3) (任意) `compose.yml` を環境に合わせて調整:
+
+- `ports` を変更（8188 が使用中の場合）
+- TLS 環境変数をコメントアウトして HTTP 強制
+- `CUDA_VISIBLE_DEVICES` で使用GPUを制限
+
+4) ビルドと起動:
 
 ```bash
 docker compose up --build
 ```
 
-4) アクセス:
+5) アクセス:
 
 - https://localhost:8188
 
@@ -51,6 +65,17 @@ ComfyUI は以下の環境変数で証明書を参照します。
 - `TLS_CERTFILE` (compose 既定: `/app/ComfyUI/certs/cert.pem`)
 
 両方のファイルが存在する場合は HTTPS、有効でない場合は HTTP で起動します。
+
+## 環境変数
+
+必須:
+
+- なし
+
+任意:
+
+- `TLS_KEYFILE` / `TLS_CERTFILE`（両方が存在する場合に HTTPS を有効化）
+- `CUDA_VISIBLE_DEVICES`（使用GPUを制限）
 
 ## クライアント側の設定 (自己署名証明書)
 
@@ -97,6 +122,34 @@ certutil -d sql:$HOME/.pki/nssdb -A -t "C,," -n "comfyui-local" -i ./certs/cert.
 - `./data/output`
 - `./certs`
 
+## データ配置の例（モデル置き場）
+
+ComfyUI の想定構成に合わせて `./data/models` 配下へ配置してください。例:
+
+- `./data/models/checkpoints/your_model.safetensors`
+- `./data/models/vae/your_vae.safetensors`
+- `./data/models/loras/your_lora.safetensors`
+- `./data/models/clip/your_clip.safetensors`
+- `./data/models/controlnet/your_controlnet.safetensors`
+- `./data/models/upscale_models/your_upscaler.pth`
+
+入力は `./data/input`、出力は `./data/output` に保存されます。
+
 ## 注意点
 
 - HTTPS を使う場合は起動前に `./certs` に証明書を用意してください。
+- Dockerfile は ComfyUI のリリースタグ `v0.8.2` に固定しています。
+- 動作検証は Ubuntu Desktop 24.02 + RTX-5070 のみで行っています。
+- WSL2 での動作検証は行っていません。
+
+## 上流ライセンス（ComfyUI）
+
+このリポジトリは上流の ComfyUI プロジェクトを Docker で動かすためのものです。
+ComfyUI は GPL-3.0 でライセンスされています。ComfyUI の利用・改変・再配布は、
+上流ライセンスの条件に従ってください。再配布前に必ず内容をご確認ください。
+
+## 免責
+
+このリポジトリは「現状のまま」提供され、いかなる保証も行いません。
+本リポジトリまたは上流ソフトウェアの利用によって生じたいかなる損害についても、
+管理者は責任を負いません。自己責任でご利用ください。

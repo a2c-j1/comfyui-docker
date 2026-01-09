@@ -1,0 +1,35 @@
+name: container-structure-test
+
+on:
+  push:
+    paths:
+      - "Dockerfile"
+      - "entrypoint.sh"
+      - "test/container-structure-test.yaml"
+      - ".github/workflows/container-structure-test.yml"
+  pull_request:
+    paths:
+      - "Dockerfile"
+      - "entrypoint.sh"
+      - "test/container-structure-test.yaml"
+      - ".github/workflows/container-structure-test.yml"
+  workflow_dispatch:
+
+jobs:
+  cst:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Build image
+        run: docker build -t comfyui-docker:test .
+
+      - name: Run container-structure-test
+        run: |
+          docker run --rm \
+            -v /var/run/docker.sock:/var/run/docker.sock \
+            -v "${{ github.workspace }}:/workdir" \
+            -w /workdir \
+            gcr.io/gcp-runtimes/container-structure-test:latest \
+            test --image comfyui-docker:test --config test/container-structure-test.yaml

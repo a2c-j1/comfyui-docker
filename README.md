@@ -11,6 +11,14 @@ This repo provides a Docker setup for running ComfyUI with optional TLS.
 
 - `comfyui`: ComfyUI application container
 
+## Enabled Features (This Image)
+
+- ComfyUI `v0.8.2` (pinned release tag)
+- ComfyUI Manager enabled (`--enable-manager`)
+- CUDA-enabled PyTorch runtime (NVIDIA GPU required for GPU acceleration)
+- Optional HTTPS/TLS if `TLS_KEYFILE` and `TLS_CERTFILE` are provided
+- Data persistence via mounted volumes (`./data/*`, `./certs`)
+
 ## Quick Start
 
 1) Generate certificates (first run, optional for HTTPS):
@@ -34,13 +42,19 @@ openssl req -x509 -nodes -days 3650 -newkey rsa:4096 \
 cp compose.yml.example compose.yml
 ```
 
-3) Build and start ComfyUI:
+3) (Optional) Adjust `compose.yml` for your environment:
+
+- Change `ports` if 8188 is already in use
+- Comment out TLS env vars to force HTTP
+- Set `CUDA_VISIBLE_DEVICES` to limit GPU use
+
+4) Build and start ComfyUI:
 
 ```bash
 docker compose up --build
 ```
 
-4) Access:
+5) Access:
 
 - https://localhost:8188
 
@@ -53,6 +67,17 @@ ComfyUI reads TLS key/cert paths from environment variables:
 
 If both files exist, HTTPS is enabled. If either file is missing, ComfyUI starts
 over HTTP.
+
+## Environment Variables
+
+Required:
+
+- None
+
+Optional:
+
+- `TLS_KEYFILE` / `TLS_CERTFILE` (enable HTTPS when both files exist)
+- `CUDA_VISIBLE_DEVICES` (limit visible GPUs)
 
 ## Client Trust (Self-Signed Certificates)
 
@@ -100,6 +125,35 @@ Host directories are mounted into the container:
 - `./data/output`
 - `./certs`
 
+## Model & Data Placement Examples
+
+Place files under `./data/models` to match ComfyUI's expected structure, for example:
+
+- `./data/models/checkpoints/your_model.safetensors`
+- `./data/models/vae/your_vae.safetensors`
+- `./data/models/loras/your_lora.safetensors`
+- `./data/models/clip/your_clip.safetensors`
+- `./data/models/controlnet/your_controlnet.safetensors`
+- `./data/models/upscale_models/your_upscaler.pth`
+
+Inputs go in `./data/input`, and outputs are saved to `./data/output`.
+
 ## Notes
 
 - If you want HTTPS, generate certs into `./certs` before starting.
+- The Dockerfile pins ComfyUI to the `v0.8.2` release tag.
+- Verified only on Ubuntu Desktop 24.02 with an RTX 5070.
+- WSL2 has not been tested.
+
+## Upstream License (ComfyUI)
+
+This repository packages and runs the upstream ComfyUI project. ComfyUI is
+licensed under GPL-3.0. Your use, modification, and distribution of ComfyUI
+are governed by its license. Please review the upstream license terms before
+redistribution.
+
+## Disclaimer
+
+This repository is provided "as is", without warranty of any kind. Use at your
+own risk. The maintainers are not responsible for any damages or losses
+resulting from use of this repository or the upstream software it runs.
