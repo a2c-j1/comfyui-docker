@@ -58,6 +58,19 @@ docker compose up --build
 
 - https://localhost:8188
 
+## Container Registry (GHCR)
+
+Public images are published to GHCR via GitHub Actions.
+
+- Image: `ghcr.io/a2c-j1/comfyui`
+- Tags: `latest`, `v0.8.2`
+
+Example:
+
+```bash
+docker pull ghcr.io/a2c-j1/comfyui:latest
+```
+
 ## TLS Configuration
 
 ComfyUI reads TLS key/cert paths from environment variables:
