@@ -60,5 +60,8 @@ commandTests:
     expectedOutput: ["v0.8.2"]
   - name: "PyTorch is 2.9.1 with CUDA 13.0"
     command: "python"
-    args: ["-c", "import torch,sys; sys.stdout.write(torch.__version__)"]
-    expectedOutput: ["2.9.1+cu130"]
+    args:
+      [
+        "-c",
+        "import torch,sys; sys.exit(0) if torch.__version__ == '2.9.1+cu130' else sys.exit('torch='+torch.__version__)",
+      ]
