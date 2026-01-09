@@ -1,0 +1,60 @@
+schemaVersion: "2.0.0"
+
+metadataTest:
+  exposedPorts: ["8188"]
+  entrypoint: ["/app/entrypoint.sh"]
+  workdir: "/app"
+  user: "appuser"
+
+fileExistenceTests:
+  - name: "entrypoint script exists"
+    path: "/app/entrypoint.sh"
+    shouldExist: true
+    isExecutableBy: "any"
+  - name: "ComfyUI directory exists"
+    path: "/app/ComfyUI"
+    shouldExist: true
+  - name: "ComfyUI main.py exists"
+    path: "/app/ComfyUI/main.py"
+    shouldExist: true
+  - name: "ComfyUI requirements exist"
+    path: "/app/ComfyUI/requirements.txt"
+    shouldExist: true
+  - name: "ComfyUI manager requirements exist"
+    path: "/app/ComfyUI/manager_requirements.txt"
+    shouldExist: true
+
+commandTests:
+  - name: "runs as appuser"
+    command: "id"
+    args: ["-u"]
+    expectedOutput: ["1000"]
+  - name: "appuser home exists"
+    command: "sh"
+    args: ["-c", "test -d /home/appuser"]
+  - name: "app directory ownership"
+    command: "sh"
+    args: ["-c", "stat -c %U:%G /app"]
+    expectedOutput: ["appuser:appuser"]
+  - name: "python is available"
+    command: "python"
+    args: ["--version"]
+  - name: "pip is available"
+    command: "python"
+    args: ["-m", "pip", "--version"]
+  - name: "git is available"
+    command: "git"
+    args: ["--version"]
+  - name: "uv is installed"
+    command: "python"
+    args: ["-m", "uv", "--version"]
+  - name: "GitPython is installed"
+    command: "python"
+    args: ["-c", "import git; print(git.__version__)"]
+  - name: "toml is installed"
+    command: "python"
+    args: ["-c", "import toml; print(toml.__version__)"]
+  - name: "ComfyUI tag is v0.8.2"
+    command: "git"
+    args: ["-C", "/app/ComfyUI", "describe", "--tags", "--exact-match"]
+    expectedOutput: ["v0.8.2"]
