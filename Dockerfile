@@ -23,7 +23,8 @@ RUN chmod +x /app/entrypoint.sh
 # Create a non-root user to run the application
 RUN groupadd -g 1000 appuser && \
     useradd -m -u 1000 -g 1000 appuser && \
-    chown -R appuser:appuser /app
+    chown -R appuser:appuser /app && \
+    chown -R 1000:1000 /opt/conda
 USER appuser
 
 EXPOSE 8188
