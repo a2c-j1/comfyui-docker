@@ -153,7 +153,7 @@ ComfyUI の想定構成に合わせて `./data/models` 配下へ配置してく�
 - HTTPS を使う場合は起動前に `./certs` に証明書を用意してください。
 - Dockerfile は ComfyUI のリリースタグ `v0.9.1` に固定しています。
 - ベースイメージは PyTorch 2.9.1 + CUDA 13.0（cudnn9 runtime）です。
-- 動作検証は Ubuntu Desktop 24.02 + RTX-5070 のみで行っています。
+- 動作検証は Ubuntu Desktop 24.04 + RTX-5070 のみで行っています。
 - WSL2 での動作検証は行っていません。
 
 ## 上流ライセンス（ComfyUI）
