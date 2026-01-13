@@ -156,7 +156,7 @@ Inputs go in `./data/input`, and outputs are saved to `./data/output`.
 - If you want HTTPS, generate certs into `./certs` before starting.
 - The Dockerfile pins ComfyUI to the `v0.9.1` release tag.
 - The base image uses PyTorch 2.9.1 with CUDA 13.0 (cudnn9 runtime).
-- Verified only on Ubuntu Desktop 24.02 with an RTX 5070.
+- Verified only on Ubuntu Desktop 24.04 with an RTX 5070.
 - WSL2 has not been tested.
 
 ## Upstream License (ComfyUI)
