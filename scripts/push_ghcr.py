@@ -6,7 +6,7 @@ import sys
 
 OWNER = "a2c-j1"
 IMAGE = "comfyui"
-DEFAULT_TAGS = ["latest", "v0.9.1"]
+DEFAULT_TAGS = ["latest", "v0.10.0"]
 
 
 def run(cmd: list[str]) -> None:
@@ -15,7 +15,7 @@ def run(cmd: list[str]) -> None:
 
 
 def main() -> int:
-    token = os.environ.get("GHCR_TOKEN")
+    token = os.environ.get("GITHUB_TOKEN")
     if not token:
         token = getpass.getpass("GHCR PAT (write:packages): ")
 
