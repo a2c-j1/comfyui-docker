@@ -1,12 +1,14 @@
 services:
   comfyui:
-    image: ghcr.io/a2c-j1/comfyui:v0.9.1
+    image: ghcr.io/a2c-j1/comfyui:v0.10.0
     # build: .
     container_name: comfyui
     restart: unless-stopped
 
     ports:
       - "8188:8188"
+
+    gpus: all
 
     environment:
       - TLS_KEYFILE=/app/ComfyUI/certs/key.pem
@@ -22,6 +24,7 @@ services:
       - ./data/__manager/config.ini:/app/ComfyUI/user/__manager/config.ini
       - ./certs:/app/ComfyUI/certs
 
+    # Swarm-only GPU reservation; ignored by docker compose.
     deploy:
       resources:
         reservations:
