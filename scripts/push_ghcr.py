@@ -6,7 +6,7 @@ import sys
 
 OWNER = "a2c-j1"
 IMAGE = "comfyui"
-DEFAULT_TAGS = ["latest", "v0.10.0"]
+DEFAULT_TAGS = ["latest", "v0.12.3"]
 
 
 def run(cmd: list[str]) -> None:

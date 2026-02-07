@@ -8,8 +8,8 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
 
 RUN git clone --depth 1 https://github.com/comfyanonymous/ComfyUI.git \
     && cd /app/ComfyUI \
-    && git fetch --depth 1 origin tag v0.10.0 \
-    && git checkout v0.10.0
+    && git fetch --depth 1 origin tag v0.12.3 \
+    && git checkout v0.12.3
 WORKDIR /app/ComfyUI
 RUN python -m pip install --no-cache-dir -r requirements.txt \
     && python -m pip install --no-cache-dir -r manager_requirements.txt \
