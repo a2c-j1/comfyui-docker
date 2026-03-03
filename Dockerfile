@@ -15,6 +15,13 @@ RUN python -m pip install --no-cache-dir -r requirements.txt \
     && python -m pip install --no-cache-dir -r manager_requirements.txt \
     && python -m pip install --no-cache-dir uv GitPython toml
 
+RUN apt update && apt install -y libgl1 libglib2.0-0
+
+RUN apt install -y build-essential \
+    && export CC=/usr/bin/gcc \
+    && export CXX=/usr/bin/g++
+
+
 # Create entrypoint script for optional TLS support
 WORKDIR /app
 COPY entrypoint.sh /app/entrypoint.sh
