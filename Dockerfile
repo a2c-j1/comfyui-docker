@@ -8,13 +8,15 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
 
 RUN git clone --depth 1 https://github.com/comfyanonymous/ComfyUI.git \
     && cd /app/ComfyUI \
-    && git fetch --depth 1 origin tag v0.18.2\
-    && git checkout v0.18.2
+    && git fetch --depth 1 origin tag v0.20.1\
+    && git checkout v0.20.1
 WORKDIR /app/ComfyUI
 RUN python -m pip install --no-cache-dir -r requirements.txt \
     && python -m pip install --no-cache-dir -r manager_requirements.txt \
-    && python -m pip install --no-cache-dir uv GitPython toml
+    && python -m pip install --no-cache-dir uv GitPython toml \
+    && python -m pip install --no-cache-dir  matrix-nio
 
+    
 RUN apt update && apt install -y libgl1 libglib2.0-0
 
 RUN apt install -y build-essential \
