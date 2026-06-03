@@ -1,3 +1,4 @@
+# syntax=docker/dockerfile:1.4
 FROM pytorch/pytorch:2.9.1-cuda13.0-cudnn9-runtime
 
 # Install ComfyUI
@@ -8,8 +9,8 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
 
 RUN git clone --depth 1 https://github.com/comfyanonymous/ComfyUI.git \
     && cd /app/ComfyUI \
-    && git fetch --depth 1 origin tag v0.21.1\
-    && git checkout v0.21.1
+    && git fetch --depth 1 origin tag v0.23.0\
+    && git checkout v0.23.0
 WORKDIR /app/ComfyUI
 RUN python -m pip install --no-cache-dir -r requirements.txt \
     && python -m pip install --no-cache-dir -r manager_requirements.txt \
@@ -22,6 +23,13 @@ RUN apt update && apt install -y libgl1 libglib2.0-0
 RUN apt install -y build-essential \
     && export CC=/usr/bin/gcc \
     && export CXX=/usr/bin/g++
+
+RUN --mount=type=bind,source=data/custom_nodes,target=/tmp/custom_nodes,readonly \
+    find /tmp/custom_nodes -mindepth 2 -maxdepth 2 \
+        \( -iname 'requirements*.txt' -o -iname 'requirement*.txt' \) \
+        -not -path '*/.disabled/*' -print0 \
+    | sort -z \
+    | xargs -0 -r -n 1 python -m pip install --no-cache-dir -r
 
 
 # Create entrypoint script for optional TLS support
