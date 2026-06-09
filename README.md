@@ -133,10 +133,13 @@ Host directories are mounted into the container:
 
 - `./data/custom_nodes`
 - `./data/user`
+- `./data/__manager`
 - `./data/models`
 - `./data/input`
 - `./data/output`
 - `./certs`
+
+If an existing installation has ComfyUI Manager config, snapshots, or cache under `./data/user/__manager`, move the files you need to `./data/__manager`.
 
 ## Model & Data Placement Examples
 

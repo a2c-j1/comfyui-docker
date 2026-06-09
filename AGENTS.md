@@ -42,6 +42,7 @@
 - 複数エージェントで作業する場合、親エージェントはナビゲーターとして改善方針・制約・レビューを担当し、サブエージェントはドライバーとして worktree 内で実装・検証を担当する。
 - サブエージェントへ依頼する際は、対象 worktree、変更してよいファイル、使ってよい Docker tag、運用中環境へ触れない条件を明示する。
 - イメージビルド検証では、運用中の tag / container / compose service を上書きしない別 tag を使う。
+- ビルド時間改善の検証は `docker build -t comfyui-docker:<検証用tag> .` のようにイメージビルドだけで行い、`docker compose up` など運用中サービスに影響しうる起動操作は行わない。
 - `Dockerfile` を更新したら以下を合わせて更新する:
   - `README.md` / `README_jp.md` の説明
   - `test/container-structure-test.yaml` のバージョン検証
