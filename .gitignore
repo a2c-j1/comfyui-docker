@@ -9,6 +9,5 @@ data/input
 data/output
 
 data/__manager/*
-!data/__manager/config.ini
 
 compose.yml
