@@ -130,10 +130,13 @@ certutil -d sql:$HOME/.pki/nssdb -A -t "C,," -n "comfyui-local" -i ./certs/cert.
 
 - `./data/custom_nodes`
 - `./data/user`
+- `./data/__manager`
 - `./data/models`
 - `./data/input`
 - `./data/output`
 - `./certs`
+
+既存環境で ComfyUI Manager の config、snapshots、cache が `./data/user/__manager` にある場合は、必要に応じて `./data/__manager` へ移行してください。
 
 ## データ配置の例（モデル置き場）
 
