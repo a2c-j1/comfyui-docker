@@ -38,7 +38,8 @@
       test --image comfyui-docker:test --config test/container-structure-test.yaml`
 
 ## 変更時のガイド
-- リポジトリ直下 `/home/a2c/deploy/comfyui-docker` は運用用の `main` ブランチを維持し、ここでは直接実装しない。
+- リポジトリ直下 `/home/a2c/deploy/comfyui-docker` は運用中の `main` ブランチ用ディレクトリとして維持し、ここでは直接実装しない。
+- 検証・改善作業は原則として別 worktree で行い、運用中の `main` ディレクトリへ影響させない。
 - 開発作業は `dev` から feature branch を作成し、`git worktree` で別ディレクトリに展開して行う。
 - `dev` から `main` への PR をマージした後は、直下の `main` ブランチフォルダで `git pull` して運用ディレクトリを最新化する。
 - 複数エージェントで作業する場合、親エージェントはナビゲーターとして改善方針・制約・レビューを担当し、サブエージェントはドライバーとして worktree 内で実装・検証を担当する。
