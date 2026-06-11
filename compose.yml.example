@@ -1,6 +1,6 @@
 services:
   comfyui:
-    image: ghcr.io/a2c-j1/comfyui:v0.10.0
+    image: ghcr.io/a2c-j1/comfyui:v0.24.0
     # build: .
     container_name: comfyui
     restart: unless-stopped
@@ -21,7 +21,7 @@ services:
       - ./data/models:/app/ComfyUI/models
       - ./data/input:/app/ComfyUI/input
       - ./data/output:/app/ComfyUI/output
-      - ./data/__manager/config.ini:/app/ComfyUI/user/__manager/config.ini
+      - ./data/__manager:/app/ComfyUI/user/__manager
       - ./certs:/app/ComfyUI/certs
 
     # Swarm-only GPU reservation; ignored by docker compose.
