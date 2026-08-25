@@ -13,9 +13,10 @@ This repo provides a Docker setup for running ComfyUI with optional TLS.
 
 ## Enabled Features (This Image)
 
-- ComfyUI `v0.24.0` (pinned release tag)
+- ComfyUI `v0.33.4` (pinned release tag)
 - ComfyUI Manager enabled (`--enable-manager`)
 - CUDA-enabled PyTorch runtime (PyTorch 2.9.1 + CUDA 13.0; NVIDIA GPU required for GPU acceleration)
+- SoundFile installed for audio-saving custom nodes
 - Optional HTTPS/TLS if `TLS_KEYFILE` and `TLS_CERTFILE` are provided
 - Data persistence via mounted volumes (`./data/*`, `./certs`)
 
@@ -63,7 +64,7 @@ docker compose up --build
 Public images are published to GHCR.
 
 - Image: `ghcr.io/a2c-j1/comfyui`
-- Tags: `latest`, `v0.24.0`
+- Tags: `latest`, `v0.33.4`
 
 Example:
 
@@ -157,7 +158,7 @@ Inputs go in `./data/input`, and outputs are saved to `./data/output`.
 ## Notes
 
 - If you want HTTPS, generate certs into `./certs` before starting.
-- The Dockerfile pins ComfyUI to the `v0.24.0` release tag.
+- The Dockerfile pins ComfyUI to the `v0.33.4` release tag.
 - The base image uses PyTorch 2.9.1 with CUDA 13.0 (cudnn9 runtime).
 - Verified only on Ubuntu Desktop 24.04 with an RTX 5070.
 - WSL2 has not been tested.
@@ -173,14 +174,38 @@ docker compose -f compose.hunyuan3d-paint.example.yml up -d
 ```
 
 - The UI is available at `https://localhost:8189` by default.
-- At first start, `ComfyUI-Hunyuan3DWrapper` is added as a symbolic link in
-  `data/custom_nodes`.
+- Existing custom nodes are shared with the normal service, while the Paint
+  wrapper is added only inside the dedicated container. The Paint wrapper is
+  never written into the normal service's `data/custom_nodes` directory.
 - Place the texture model in `data/models/diffusers/hunyuan3d-paint-v2-0` or
   `hunyuan3d-paint-v2-0-turbo`.
 - On an RTX 5070 (12 GB), start with the Turbo model and a small texture size.
 
 The derived image builds a Linux `custom_rasterizer`; its first build downloads
 a CUDA development image and compiles the extension.
+
+## Using existing data from a dev worktree
+
+When building from a `dev` worktree without changing the operational `main` checkout, first
+sync the custom-node sources into the worktree. Docker build contexts do not use a symlink to
+the operational checkout.
+
+```bash
+./scripts/sync_custom_nodes_for_build.sh /home/a2c/deploy/comfyui-docker/data/custom_nodes
+docker build -t comfyui-docker:dev-main-paint .
+docker build -f Dockerfile.hunyuan3d-paint -t comfyui-docker:dev-main-paint-hunyuan3d .
+```
+
+At runtime, set `COMFYUI_DATA_DIR` to an absolute existing `data` directory to share models,
+inputs, outputs, and Manager settings. It defaults to the worktree's `./data` directory.
+
+```bash
+export COMFYUI_DATA_DIR=/home/a2c/deploy/comfyui-docker/data
+docker compose -f compose.hunyuan3d-paint.example.yml up -d
+```
+
+To run the normal image on a separate port, copy `compose.yml.example` and change its port and
+`container_name`; this does not stop or overwrite the operational `comfyui` container.
 
 ## Upstream License (ComfyUI)
 

@@ -52,12 +52,25 @@ RUN --mount=type=cache,target=/root/.cache/pip \
     && python -m pip install -r manager_requirements.txt \
     && python -m pip install uv GitPython toml matrix-nio soundfile
 
+# Keep feature parity with the regular dev image: every enabled custom node
+# has its Python requirements installed during the image build.
+RUN --mount=type=bind,source=data/custom_nodes,target=/tmp/custom_nodes,readonly \
+    --mount=type=cache,target=/root/.cache/pip \
+    export CC=/usr/bin/gcc \
+    && export CXX=/usr/bin/g++ \
+    && find /tmp/custom_nodes -mindepth 2 -maxdepth 2 \
+        \( -iname 'requirements*.txt' -o -iname 'requirement*.txt' \) \
+        -not -path '*/.disabled/*' -print0 \
+    | sort -z \
+    | xargs -0 -r -n 1 python -m pip install -r
+
 COPY --from=hunyuan3d-builder /opt/ComfyUI-Hunyuan3DWrapper /opt/ComfyUI-Hunyuan3DWrapper
 COPY --from=hunyuan3d-builder /opt/wheels /opt/wheels
 RUN --mount=type=cache,target=/root/.cache/pip \
     python -m pip install -r /opt/ComfyUI-Hunyuan3DWrapper/requirements.txt \
     && python -m pip install /opt/wheels/custom_rasterizer-*.whl
 
+COPY --chown=appuser:appuser --chmod=755 entrypoint.sh /app/entrypoint.sh
 COPY --chown=appuser:appuser --chmod=755 entrypoint-hunyuan3d-paint.sh /app/entrypoint-hunyuan3d-paint.sh
 ENV PIP_USER=1 \
     PYTHONUSERBASE=/home/appuser/.local \
