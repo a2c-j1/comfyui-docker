@@ -9,5 +9,6 @@ data/input
 data/output
 
 data/__manager/*
+!data/__manager/.gitkeep
 
 compose.yml

@@ -177,6 +177,9 @@ docker compose -f compose.hunyuan3d-paint.example.yml up -d
 - Existing custom nodes are shared with the normal service, while the Paint
   wrapper is added only inside the dedicated container. The Paint wrapper is
   never written into the normal service's `data/custom_nodes` directory.
+- Models, inputs, and outputs are shared with `comfyui`; the Paint service
+  keeps its `data/user` and `data/__manager` in its own worktree to avoid
+  contention for ComfyUI's SQLite database.
 - Place the texture model in `data/models/diffusers/hunyuan3d-paint-v2-0` or
   `hunyuan3d-paint-v2-0-turbo`.
 - On an RTX 5070 (12 GB), start with the Turbo model and a small texture size.
@@ -197,7 +200,8 @@ docker build -f Dockerfile.hunyuan3d-paint -t comfyui-docker:dev-main-paint-huny
 ```
 
 At runtime, set `COMFYUI_DATA_DIR` to an absolute existing `data` directory to share models,
-inputs, outputs, and Manager settings. It defaults to the worktree's `./data` directory.
+inputs, outputs, and custom nodes. The Paint service keeps user and Manager settings in its
+own worktree to avoid SQLite contention.
 
 ```bash
 export COMFYUI_DATA_DIR=/home/a2c/deploy/comfyui-docker/data

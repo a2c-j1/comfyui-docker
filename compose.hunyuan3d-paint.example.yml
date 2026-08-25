@@ -14,9 +14,10 @@ services:
       - TLS_CERTFILE=/app/ComfyUI/certs/cert.pem
     volumes:
       - ${COMFYUI_DATA_DIR:-./data}/custom_nodes:/mnt/host-custom-nodes
-      - ${COMFYUI_DATA_DIR:-./data}/user:/app/ComfyUI/user
+      # Keep the ComfyUI SQLite database separate from the normal service.
+      - ./data/user:/app/ComfyUI/user
       - ${COMFYUI_DATA_DIR:-./data}/models:/app/ComfyUI/models
       - ${COMFYUI_DATA_DIR:-./data}/input:/app/ComfyUI/input
       - ${COMFYUI_DATA_DIR:-./data}/output:/app/ComfyUI/output
-      - ${COMFYUI_DATA_DIR:-./data}/__manager:/app/ComfyUI/user/__manager
+      - ./data/__manager:/app/ComfyUI/user/__manager
       - ./certs:/app/ComfyUI/certs
