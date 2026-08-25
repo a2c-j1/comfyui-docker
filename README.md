@@ -187,6 +187,25 @@ docker compose -f compose.hunyuan3d-paint.example.yml up -d
 The derived image builds a Linux `custom_rasterizer`; its first build downloads
 a CUDA development image and compiles the extension.
 
+## Migrating to one ComfyUI service with Paint
+
+Instead of running normal and Paint services separately, you can run one
+`comfyui` service that keeps the existing persistent data. The Paint wrapper is
+added only inside the container, so `data/custom_nodes` is unchanged.
+
+Stop the current ComfyUI before switching; two services must not open the same
+`data/user/comfyui.db` at the same time.
+
+```bash
+./scripts/sync_custom_nodes_for_build.sh /home/a2c/deploy/comfyui-docker/data/custom_nodes
+export COMFYUI_DATA_DIR=/home/a2c/deploy/comfyui-docker/data
+docker compose -f compose.unified-paint.example.yml up --build -d
+```
+
+This compose uses port 8188 and keeps the existing user data, Manager settings,
+models, inputs, and outputs. Open `http://localhost:8188` after it starts. Stop
+and remove the former Paint service on port 8189 only after confirming it works.
+
 ## Using existing data from a dev worktree
 
 When building from a `dev` worktree without changing the operational `main` checkout, first

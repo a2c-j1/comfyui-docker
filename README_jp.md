@@ -183,6 +183,25 @@ docker compose -f compose.hunyuan3d-paint.example.yml up -d
 この派生イメージはLinux向けの `custom_rasterizer` をビルドするため、初回だけ
 CUDA開発用ベースイメージの取得とコンパイルに時間がかかります。
 
+## Paint を含む単一 ComfyUI への移行
+
+通常版と Paint 版を別サービスにせず、既存の永続データを引き継いだ単一の
+`comfyui` サービスとして起動できます。Paint Wrapper はコンテナ内にだけ追加されるため、
+`data/custom_nodes` の内容は変更されません。
+
+切替前に、現在の ComfyUI を停止してください。同じ `data/user/comfyui.db` を二つの
+サービスから同時に開かないためです。
+
+```bash
+./scripts/sync_custom_nodes_for_build.sh /home/a2c/deploy/comfyui-docker/data/custom_nodes
+export COMFYUI_DATA_DIR=/home/a2c/deploy/comfyui-docker/data
+docker compose -f compose.unified-paint.example.yml up --build -d
+```
+
+この compose は既定の 8188 番と既存の `user`、Manager 設定、モデル、入力、出力を
+そのまま使います。起動後に `http://localhost:8188` を開いて確認してください。
+従来の 8189 番 Paint サービスは正常起動を確認してから停止・削除できます。
+
 ## dev worktree で既存データを使う
 
 運用中の `main` を変更せずに `dev` 系の worktree でイメージを作る場合は、ビルド前に
