@@ -174,6 +174,8 @@ docker compose -f compose.hunyuan3d-paint.example.yml up -d
 - 既存のカスタムノードは通常版と同じ `data/custom_nodes` を共有し、Paintノードだけを専用
   コンテナ内へ追加します。Paintノード本体は共有ディレクトリへ書き込まれないため、通常の
   `comfyui` サービスへ追加されません。
+- モデル・入力・出力は `comfyui` と共有しますが、ComfyUI の SQLite データベース競合を
+  避けるため、Paint 側の `data/user` と `data/__manager` は専用 worktree 内に保存されます。
 - テクスチャモデルは `data/models/diffusers/hunyuan3d-paint-v2-0` または
   `hunyuan3d-paint-v2-0-turbo` に置きます。
 - RTX 5070（12 GB）ではまず Turbo モデルと小さめのテクスチャ解像度から試してください。
@@ -193,8 +195,9 @@ docker build -t comfyui-docker:dev-main-paint .
 docker build -f Dockerfile.hunyuan3d-paint -t comfyui-docker:dev-main-paint-hunyuan3d .
 ```
 
-実行時にモデル・入出力・Manager 設定を既存データと共有するには、`COMFYUI_DATA_DIR` に
-既存の `data` ディレクトリの絶対パスを指定します。既定値は worktree 内の `./data` です。
+実行時にモデル・入出力・カスタムノードを既存データと共有するには、`COMFYUI_DATA_DIR` に
+既存の `data` ディレクトリの絶対パスを指定します。Paint 側の user / Manager 設定は
+SQLite 競合を避けるため worktree 内に分離されます。
 
 ```bash
 export COMFYUI_DATA_DIR=/home/a2c/deploy/comfyui-docker/data
