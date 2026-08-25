@@ -159,6 +159,25 @@ ComfyUI の想定構成に合わせて `./data/models` 配下へ配置してく�
 - 動作検証は Ubuntu Desktop 24.04 + RTX-5070 のみで行っています。
 - WSL2 での動作検証は行っていません。
 
+## Hunyuan3D Paint（既存メッシュへのテクスチャ付与）
+
+テクスチャなしで作成済みの GLB / OBJ にテクスチャを付ける場合は、通常の
+`comfyui` サービスを置き換えず、専用イメージを別ポートで起動できます。
+
+```bash
+docker build -f Dockerfile.hunyuan3d-paint -t comfyui-docker:hunyuan3d-paint .
+docker compose -f compose.hunyuan3d-paint.example.yml up -d
+```
+
+- UI は既定で `https://localhost:8189` です。
+- 初回起動時に `ComfyUI-Hunyuan3DWrapper` が `data/custom_nodes` へシンボリックリンクとして追加されます。
+- テクスチャモデルは `data/models/diffusers/hunyuan3d-paint-v2-0` または
+  `hunyuan3d-paint-v2-0-turbo` に置きます。
+- RTX 5070（12 GB）ではまず Turbo モデルと小さめのテクスチャ解像度から試してください。
+
+この派生イメージはLinux向けの `custom_rasterizer` をビルドするため、初回だけ
+CUDA開発用ベースイメージの取得とコンパイルに時間がかかります。
+
 ## 上流ライセンス（ComfyUI）
 
 このリポジトリは上流の ComfyUI プロジェクトを Docker で動かすためのものです。

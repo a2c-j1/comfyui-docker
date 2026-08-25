@@ -1,0 +1,69 @@
+# syntax=docker/dockerfile:1.4
+
+# Build the Linux CUDA extension against exactly the same PyTorch/CUDA release
+# used by the runtime image.  The upstream node ships Windows wheels only.
+FROM pytorch/pytorch:2.9.1-cuda13.0-cudnn9-devel AS hunyuan3d-builder
+
+ARG HUNYUAN3D_WRAPPER_REF=2609efa38f6a98292476f714839b7c1e5f9b699a
+# Docker builds do not expose the host GPU.  Compile specifically for the
+# RTX 5070 (Blackwell, sm_120) rather than relying on auto-detection.
+ENV TORCH_CUDA_ARCH_LIST=12.0
+
+RUN --mount=type=cache,target=/var/cache/apt,sharing=locked \
+    --mount=type=cache,target=/var/lib/apt,sharing=locked \
+    rm -f /etc/apt/apt.conf.d/docker-clean \
+    && apt-get update \
+    && apt-get install -y --no-install-recommends git
+
+RUN git clone https://github.com/kijai/ComfyUI-Hunyuan3DWrapper.git /opt/ComfyUI-Hunyuan3DWrapper \
+    && cd /opt/ComfyUI-Hunyuan3DWrapper \
+    && git checkout --detach "$HUNYUAN3D_WRAPPER_REF"
+
+RUN --mount=type=cache,target=/root/.cache/pip \
+    python -m pip wheel --no-deps \
+      /opt/ComfyUI-Hunyuan3DWrapper/hy3dgen/texgen/custom_rasterizer \
+      --wheel-dir /opt/wheels
+
+FROM pytorch/pytorch:2.9.1-cuda13.0-cudnn9-runtime
+
+RUN --mount=type=cache,target=/var/cache/apt,sharing=locked \
+    --mount=type=cache,target=/var/lib/apt,sharing=locked \
+    rm -f /etc/apt/apt.conf.d/docker-clean \
+    && apt-get update \
+    && apt-get install -y --no-install-recommends \
+    build-essential \
+    git \
+    libgl1 \
+    libopengl0 \
+    libglib2.0-0
+
+RUN groupadd -g 1000 appuser \
+    && useradd -m -u 1000 -g 1000 appuser \
+    && mkdir -p /app \
+    && chown appuser:appuser /app
+
+WORKDIR /app
+USER appuser
+RUN git clone --depth 1 --branch v0.33.4 https://github.com/comfyanonymous/ComfyUI.git
+USER root
+WORKDIR /app/ComfyUI
+RUN --mount=type=cache,target=/root/.cache/pip \
+    python -m pip install -r requirements.txt \
+    && python -m pip install -r manager_requirements.txt \
+    && python -m pip install uv GitPython toml matrix-nio soundfile
+
+COPY --from=hunyuan3d-builder /opt/ComfyUI-Hunyuan3DWrapper /opt/ComfyUI-Hunyuan3DWrapper
+COPY --from=hunyuan3d-builder /opt/wheels /opt/wheels
+RUN --mount=type=cache,target=/root/.cache/pip \
+    python -m pip install -r /opt/ComfyUI-Hunyuan3DWrapper/requirements.txt \
+    && python -m pip install /opt/wheels/custom_rasterizer-*.whl
+
+COPY --chown=appuser:appuser --chmod=755 entrypoint-hunyuan3d-paint.sh /app/entrypoint-hunyuan3d-paint.sh
+ENV PIP_USER=1 \
+    PYTHONUSERBASE=/home/appuser/.local \
+    PATH=/home/appuser/.local/bin:$PATH
+USER appuser
+
+EXPOSE 8188
+
+ENTRYPOINT ["/app/entrypoint-hunyuan3d-paint.sh"]
