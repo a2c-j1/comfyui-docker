@@ -44,13 +44,25 @@ RUN groupadd -g 1000 appuser \
 
 WORKDIR /app
 USER appuser
-RUN git clone --depth 1 --branch v0.33.4 https://github.com/comfyanonymous/ComfyUI.git
+RUN git clone --depth 1 --branch v0.24.0 https://github.com/comfyanonymous/ComfyUI.git
 USER root
 WORKDIR /app/ComfyUI
 RUN --mount=type=cache,target=/root/.cache/pip \
     python -m pip install -r requirements.txt \
     && python -m pip install -r manager_requirements.txt \
-    && python -m pip install uv GitPython toml matrix-nio soundfile
+    && python -m pip install uv GitPython toml matrix-nio
+
+# Keep feature parity with the regular dev image: every enabled custom node
+# has its Python requirements installed during the image build.
+RUN --mount=type=bind,source=data/custom_nodes,target=/tmp/custom_nodes,readonly \
+    --mount=type=cache,target=/root/.cache/pip \
+    export CC=/usr/bin/gcc \
+    && export CXX=/usr/bin/g++ \
+    && find /tmp/custom_nodes -mindepth 2 -maxdepth 2 \
+        \( -iname 'requirements*.txt' -o -iname 'requirement*.txt' \) \
+        -not -path '*/.disabled/*' -print0 \
+    | sort -z \
+    | xargs -0 -r -n 1 python -m pip install -r
 
 COPY --from=hunyuan3d-builder /opt/ComfyUI-Hunyuan3DWrapper /opt/ComfyUI-Hunyuan3DWrapper
 COPY --from=hunyuan3d-builder /opt/wheels /opt/wheels
