@@ -162,6 +162,26 @@ Inputs go in `./data/input`, and outputs are saved to `./data/output`.
 - Verified only on Ubuntu Desktop 24.04 with an RTX 5070.
 - WSL2 has not been tested.
 
+## Hunyuan3D Paint (texturing existing meshes)
+
+For adding textures to an existing GLB or OBJ, run a dedicated service instead
+of replacing the regular `comfyui` service:
+
+```bash
+docker build -f Dockerfile.hunyuan3d-paint -t comfyui-docker:hunyuan3d-paint .
+docker compose -f compose.hunyuan3d-paint.example.yml up -d
+```
+
+- The UI is available at `https://localhost:8189` by default.
+- At first start, `ComfyUI-Hunyuan3DWrapper` is added as a symbolic link in
+  `data/custom_nodes`.
+- Place the texture model in `data/models/diffusers/hunyuan3d-paint-v2-0` or
+  `hunyuan3d-paint-v2-0-turbo`.
+- On an RTX 5070 (12 GB), start with the Turbo model and a small texture size.
+
+The derived image builds a Linux `custom_rasterizer`; its first build downloads
+a CUDA development image and compiles the extension.
+
 ## Upstream License (ComfyUI)
 
 This repository packages and runs the upstream ComfyUI project. ComfyUI is

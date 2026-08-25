@@ -1,0 +1,22 @@
+services:
+  comfyui-hunyuan3d-paint:
+    build:
+      context: .
+      dockerfile: Dockerfile.hunyuan3d-paint
+    image: comfyui-docker:hunyuan3d-paint
+    container_name: comfyui-hunyuan3d-paint
+    ports:
+      - "8189:8188"
+    gpus: all
+    environment:
+      - TZ=Asia/Tokyo
+      - TLS_KEYFILE=/app/ComfyUI/certs/key.pem
+      - TLS_CERTFILE=/app/ComfyUI/certs/cert.pem
+    volumes:
+      - ./data/custom_nodes:/app/ComfyUI/custom_nodes
+      - ./data/user:/app/ComfyUI/user
+      - ./data/models:/app/ComfyUI/models
+      - ./data/input:/app/ComfyUI/input
+      - ./data/output:/app/ComfyUI/output
+      - ./data/__manager:/app/ComfyUI/user/__manager
+      - ./certs:/app/ComfyUI/certs
