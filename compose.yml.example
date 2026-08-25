@@ -1,6 +1,6 @@
 services:
   comfyui:
-    image: ghcr.io/a2c-j1/comfyui:v0.24.0
+    image: ghcr.io/a2c-j1/comfyui:v0.33.4
     # build: .
     container_name: comfyui
     restart: unless-stopped
@@ -16,12 +16,12 @@ services:
       # - CUDA_VISIBLE_DEVICES=0
 
     volumes:
-      - ./data/custom_nodes:/app/ComfyUI/custom_nodes
-      - ./data/user:/app/ComfyUI/user
-      - ./data/models:/app/ComfyUI/models
-      - ./data/input:/app/ComfyUI/input
-      - ./data/output:/app/ComfyUI/output
-      - ./data/__manager:/app/ComfyUI/user/__manager
+      - ${COMFYUI_DATA_DIR:-./data}/custom_nodes:/app/ComfyUI/custom_nodes
+      - ${COMFYUI_DATA_DIR:-./data}/user:/app/ComfyUI/user
+      - ${COMFYUI_DATA_DIR:-./data}/models:/app/ComfyUI/models
+      - ${COMFYUI_DATA_DIR:-./data}/input:/app/ComfyUI/input
+      - ${COMFYUI_DATA_DIR:-./data}/output:/app/ComfyUI/output
+      - ${COMFYUI_DATA_DIR:-./data}/__manager:/app/ComfyUI/user/__manager
       - ./certs:/app/ComfyUI/certs
 
     # Swarm-only GPU reservation; ignored by docker compose.

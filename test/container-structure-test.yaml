@@ -54,10 +54,13 @@ commandTests:
   - name: "toml is installed"
     command: "python"
     args: ["-c", "import toml; print(toml.__version__)"]
-  - name: "ComfyUI tag is v0.24.0"
+  - name: "soundfile is installed"
+    command: "python"
+    args: ["-c", "import soundfile; print(soundfile.__version__)"]
+  - name: "ComfyUI tag is v0.33.4"
     command: "git"
     args: ["-C", "/app/ComfyUI", "describe", "--tags", "--exact-match"]
-    expectedOutput: ["v0.24.0"]
+    expectedOutput: ["v0.33.4"]
   - name: "PyTorch is 2.9.1 with CUDA 13.0"
     command: "python"
     args:

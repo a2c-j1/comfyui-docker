@@ -44,13 +44,13 @@ RUN groupadd -g 1000 appuser \
 
 WORKDIR /app
 USER appuser
-RUN git clone --depth 1 --branch v0.24.0 https://github.com/comfyanonymous/ComfyUI.git
+RUN git clone --depth 1 --branch v0.33.4 https://github.com/comfyanonymous/ComfyUI.git
 USER root
 WORKDIR /app/ComfyUI
 RUN --mount=type=cache,target=/root/.cache/pip \
     python -m pip install -r requirements.txt \
     && python -m pip install -r manager_requirements.txt \
-    && python -m pip install uv GitPython toml matrix-nio
+    && python -m pip install uv GitPython toml matrix-nio soundfile
 
 # Keep feature parity with the regular dev image: every enabled custom node
 # has its Python requirements installed during the image build.

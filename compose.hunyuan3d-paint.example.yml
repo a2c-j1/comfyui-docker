@@ -13,10 +13,10 @@ services:
       - TLS_KEYFILE=/app/ComfyUI/certs/key.pem
       - TLS_CERTFILE=/app/ComfyUI/certs/cert.pem
     volumes:
-      - ./data/custom_nodes:/mnt/host-custom-nodes:ro
-      - ./data/user:/app/ComfyUI/user
-      - ./data/models:/app/ComfyUI/models
-      - ./data/input:/app/ComfyUI/input
-      - ./data/output:/app/ComfyUI/output
-      - ./data/__manager:/app/ComfyUI/user/__manager
+      - ${COMFYUI_DATA_DIR:-./data}/custom_nodes:/mnt/host-custom-nodes
+      - ${COMFYUI_DATA_DIR:-./data}/user:/app/ComfyUI/user
+      - ${COMFYUI_DATA_DIR:-./data}/models:/app/ComfyUI/models
+      - ${COMFYUI_DATA_DIR:-./data}/input:/app/ComfyUI/input
+      - ${COMFYUI_DATA_DIR:-./data}/output:/app/ComfyUI/output
+      - ${COMFYUI_DATA_DIR:-./data}/__manager:/app/ComfyUI/user/__manager
       - ./certs:/app/ComfyUI/certs
