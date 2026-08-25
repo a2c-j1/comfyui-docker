@@ -173,8 +173,9 @@ docker compose -f compose.hunyuan3d-paint.example.yml up -d
 ```
 
 - The UI is available at `https://localhost:8189` by default.
-- At first start, `ComfyUI-Hunyuan3DWrapper` is added as a symbolic link in
-  `data/custom_nodes`.
+- Existing custom nodes are read-only sources, and the Paint wrapper is added
+  only inside the dedicated container. The regular `comfyui` service's
+  `data/custom_nodes` is not changed.
 - Place the texture model in `data/models/diffusers/hunyuan3d-paint-v2-0` or
   `hunyuan3d-paint-v2-0-turbo`.
 - On an RTX 5070 (12 GB), start with the Turbo model and a small texture size.

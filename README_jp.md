@@ -170,7 +170,8 @@ docker compose -f compose.hunyuan3d-paint.example.yml up -d
 ```
 
 - UI は既定で `https://localhost:8189` です。
-- 初回起動時に `ComfyUI-Hunyuan3DWrapper` が `data/custom_nodes` へシンボリックリンクとして追加されます。
+- 既存のカスタムノードは読み取り専用で参照し、Paintノードは専用コンテナ内だけへ追加します。
+  そのため通常の `comfyui` サービスの `data/custom_nodes` は変更されません。
 - テクスチャモデルは `data/models/diffusers/hunyuan3d-paint-v2-0` または
   `hunyuan3d-paint-v2-0-turbo` に置きます。
 - RTX 5070（12 GB）ではまず Turbo モデルと小さめのテクスチャ解像度から試してください。

@@ -70,6 +70,7 @@ RUN --mount=type=cache,target=/root/.cache/pip \
     python -m pip install -r /opt/ComfyUI-Hunyuan3DWrapper/requirements.txt \
     && python -m pip install /opt/wheels/custom_rasterizer-*.whl
 
+COPY --chown=appuser:appuser --chmod=755 entrypoint.sh /app/entrypoint.sh
 COPY --chown=appuser:appuser --chmod=755 entrypoint-hunyuan3d-paint.sh /app/entrypoint-hunyuan3d-paint.sh
 ENV PIP_USER=1 \
     PYTHONUSERBASE=/home/appuser/.local \
