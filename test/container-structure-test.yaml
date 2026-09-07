@@ -57,10 +57,10 @@ commandTests:
   - name: "soundfile is installed"
     command: "python"
     args: ["-c", "import soundfile; print(soundfile.__version__)"]
-  - name: "ComfyUI tag is v0.33.4"
+  - name: "ComfyUI checkout is a Git repository"
     command: "git"
-    args: ["-C", "/app/ComfyUI", "describe", "--tags", "--exact-match"]
-    expectedOutput: ["v0.33.4"]
+    args: ["-C", "/app/ComfyUI", "rev-parse", "--is-inside-work-tree"]
+    expectedOutput: ["true"]
   - name: "PyTorch is 2.9.1 with CUDA 13.0"
     command: "python"
     args:

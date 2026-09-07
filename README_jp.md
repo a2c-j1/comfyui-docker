@@ -13,7 +13,7 @@
 
 ## このイメージで有効になる機能
 
-- ComfyUI `v0.33.4`（リリースタグ固定）
+- イメージビルド時点の ComfyUI 上流既定ブランチ
 - ComfyUI Manager を有効化（`--enable-manager`）
 - CUDA 対応 PyTorch ランタイム（PyTorch 2.9.1 + CUDA 13.0。GPU 利用には NVIDIA GPU が必要）
 - 音声保存系 custom node 用に SoundFile をインストール
@@ -63,7 +63,7 @@ docker compose up --build
 GHCR に public イメージを公開しています。
 
 - イメージ: `ghcr.io/a2c-j1/comfyui`
-- タグ: `latest`, `v0.33.4`
+- タグ: `latest`
 
 例:
 
@@ -155,7 +155,7 @@ ComfyUI の想定構成に合わせて `./data/models` 配下へ配置してく�
 ## 注意点
 
 - HTTPS を使う場合は起動前に `./certs` に証明書を用意してください。
-- Dockerfile は ComfyUI のリリースタグ `v0.33.4` に固定しています。
+- Dockerfile はイメージビルド時に ComfyUI の上流既定ブランチを取得します。Docker のキャッシュを使わず最新の取得を強制する場合は、起動前に `docker compose build --pull --no-cache` を実行してください。
 - ベースイメージは PyTorch 2.9.1 + CUDA 13.0（cudnn9 runtime）です。
 - 動作検証は Ubuntu Desktop 24.04 + RTX-5070 のみで行っています。
 - WSL2 での動作検証は行っていません。
