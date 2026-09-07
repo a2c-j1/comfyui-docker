@@ -174,9 +174,9 @@ docker compose -f compose.hunyuan3d-paint.example.yml up -d
 ```
 
 - The UI is available at `https://localhost:8189` by default.
-- Existing custom nodes are shared with the normal service, while the Paint
-  wrapper is added only inside the dedicated container. The Paint wrapper is
-  never written into the normal service's `data/custom_nodes` directory.
+- Existing custom-node sources are shared read-only with the normal service.
+  The Paint wrapper is added only inside the dedicated container and is never
+  written into the normal service's `data/custom_nodes` directory.
 - Models, inputs, and outputs are shared with `comfyui`; the Paint service
   keeps its `data/user` and `data/__manager` in its own worktree to avoid
   contention for ComfyUI's SQLite database.

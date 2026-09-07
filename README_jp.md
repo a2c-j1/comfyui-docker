@@ -171,9 +171,8 @@ docker compose -f compose.hunyuan3d-paint.example.yml up -d
 ```
 
 - UI は既定で `https://localhost:8189` です。
-- 既存のカスタムノードは通常版と同じ `data/custom_nodes` を共有し、Paintノードだけを専用
-  コンテナ内へ追加します。Paintノード本体は共有ディレクトリへ書き込まれないため、通常の
-  `comfyui` サービスへ追加されません。
+- 既存のカスタムノードは通常版と読み取り専用で共有し、Paintノードは専用コンテナ内だけへ
+  追加します。Paintノード本体は通常の `comfyui` サービスの `data/custom_nodes` へ書き込まれません。
 - モデル・入力・出力は `comfyui` と共有しますが、ComfyUI の SQLite データベース競合を
   避けるため、Paint 側の `data/user` と `data/__manager` は専用 worktree 内に保存されます。
 - テクスチャモデルは `data/models/diffusers/hunyuan3d-paint-v2-0` または
