@@ -1,7 +1,9 @@
 services:
   comfyui:
-    image: ghcr.io/a2c-j1/comfyui:v0.33.4
-    # build: .
+    build:
+      context: .
+      dockerfile: Dockerfile.hunyuan3d-paint
+    image: comfyui-docker:unified-paint
     container_name: comfyui
     restart: unless-stopped
 
@@ -16,7 +18,9 @@ services:
       # - CUDA_VISIBLE_DEVICES=0
 
     volumes:
-      - ${COMFYUI_DATA_DIR:-./data}/custom_nodes:/app/ComfyUI/custom_nodes
+      # Keep host custom-node sources outside the container node directory so
+      # the entrypoint can add the private Paint wrapper alongside them.
+      - ${COMFYUI_DATA_DIR:-./data}/custom_nodes:/mnt/host-custom-nodes
       - ${COMFYUI_DATA_DIR:-./data}/user:/app/ComfyUI/user
       - ${COMFYUI_DATA_DIR:-./data}/models:/app/ComfyUI/models
       - ${COMFYUI_DATA_DIR:-./data}/input:/app/ComfyUI/input
@@ -24,7 +28,6 @@ services:
       - ${COMFYUI_DATA_DIR:-./data}/__manager:/app/ComfyUI/user/__manager
       - ./certs:/app/ComfyUI/certs
 
-    # Swarm-only GPU reservation; ignored by docker compose.
     deploy:
       resources:
         reservations:

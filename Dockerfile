@@ -19,7 +19,7 @@ RUN groupadd -g 1000 appuser \
 # Install ComfyUI
 WORKDIR /app
 USER appuser
-RUN git clone --depth 1 --branch v0.24.0 https://github.com/comfyanonymous/ComfyUI.git
+RUN git clone --depth 1 --branch v0.33.4 https://github.com/comfyanonymous/ComfyUI.git
 USER root
 WORKDIR /app/ComfyUI
 RUN --mount=type=cache,target=/root/.cache/pip \
@@ -27,6 +27,8 @@ RUN --mount=type=cache,target=/root/.cache/pip \
     && python -m pip install -r manager_requirements.txt \
     && python -m pip install uv GitPython toml \
     && python -m pip install matrix-nio
+RUN --mount=type=cache,target=/root/.cache/pip \
+    python -m pip install soundfile
 
 RUN --mount=type=bind,source=data/custom_nodes,target=/tmp/custom_nodes,readonly \
     --mount=type=cache,target=/root/.cache/pip \
