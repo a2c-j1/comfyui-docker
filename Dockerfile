@@ -19,7 +19,9 @@ RUN groupadd -g 1000 appuser \
 # Install ComfyUI
 WORKDIR /app
 USER appuser
-RUN git clone --depth 1 --branch v0.33.4 https://github.com/comfyanonymous/ComfyUI.git
+# Follow ComfyUI's upstream default branch rather than pinning a release tag.
+# Rebuild with --no-cache when a fresh upstream checkout is required.
+RUN git clone --depth 1 https://github.com/comfyanonymous/ComfyUI.git
 USER root
 WORKDIR /app/ComfyUI
 RUN --mount=type=cache,target=/root/.cache/pip \

@@ -1,7 +1,7 @@
 services:
   comfyui:
-    image: ghcr.io/a2c-j1/comfyui:v0.33.4
-    # build: .
+    image: ghcr.io/a2c-j1/comfyui:latest
+    build: .
     container_name: comfyui
     restart: unless-stopped
 

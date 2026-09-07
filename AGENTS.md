@@ -2,11 +2,11 @@
 
 ## 概要
 - ComfyUI を Docker + Compose で動かす構成。TLS は任意で有効化可能。
-- `Dockerfile` で ComfyUI のリリースタグと PyTorch CUDA ベースイメージを固定し、`entrypoint.sh` で証明書があれば HTTPS を有効化。
+- `Dockerfile` で PyTorch CUDA ベースイメージを固定し、ComfyUI は上流の既定ブランチをイメージビルド時に取得する。`entrypoint.sh` で証明書があれば HTTPS を有効化。
 - データ永続化はホスト側ディレクトリをボリュームマウントして行う。
 
 ## 主要ファイル
-- `Dockerfile`: ランタイムイメージをビルドし、ComfyUI バージョンを固定。
+- `Dockerfile`: ランタイムイメージをビルドし、ComfyUI の上流既定ブランチを取得。
 - `entrypoint.sh`: ComfyUI を起動し、環境変数と証明書の有無で TLS を切り替え。
 - `compose.yml` / `compose.yml.example`: ローカルデプロイ用の設定。
 - `certs/`: TLS 証明書（自己署名の手順は README 参照）。

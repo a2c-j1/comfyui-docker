@@ -13,7 +13,7 @@
 
 ## このイメージで有効になる機能
 
-- ComfyUI `v0.33.4`（リリースタグ固定）
+- イメージビルド時点の ComfyUI 上流既定ブランチ
 - ComfyUI Manager を有効化（`--enable-manager`）
 - CUDA 対応 PyTorch ランタイム（PyTorch 2.9.1 + CUDA 13.0。GPU 利用には NVIDIA GPU が必要）
 - 音声保存系 custom node 用に SoundFile をインストール
@@ -63,7 +63,7 @@ docker compose up --build
 GHCR に public イメージを公開しています。
 
 - イメージ: `ghcr.io/a2c-j1/comfyui`
-- タグ: `latest`, `v0.33.4`
+- タグ: `latest`
 
 例:
 
@@ -155,7 +155,7 @@ ComfyUI の想定構成に合わせて `./data/models` 配下へ配置してく�
 ## 注意点
 
 - HTTPS を使う場合は起動前に `./certs` に証明書を用意してください。
-- Dockerfile は ComfyUI のリリースタグ `v0.33.4` に固定しています。
+- Dockerfile はイメージビルド時に ComfyUI の上流既定ブランチを取得します。Docker のキャッシュを使わず最新の取得を強制する場合は、起動前に `docker compose build --pull --no-cache` を実行してください。
 - ベースイメージは PyTorch 2.9.1 + CUDA 13.0（cudnn9 runtime）です。
 - 動作検証は Ubuntu Desktop 24.04 + RTX-5070 のみで行っています。
 - WSL2 での動作検証は行っていません。
@@ -171,9 +171,8 @@ docker compose -f compose.hunyuan3d-paint.example.yml up -d
 ```
 
 - UI は既定で `https://localhost:8189` です。
-- 既存のカスタムノードは通常版と同じ `data/custom_nodes` を共有し、Paintノードだけを専用
-  コンテナ内へ追加します。Paintノード本体は共有ディレクトリへ書き込まれないため、通常の
-  `comfyui` サービスへ追加されません。
+- 既存のカスタムノードは通常版と読み取り専用で共有し、Paintノードは専用コンテナ内だけへ
+  追加します。Paintノード本体は通常の `comfyui` サービスの `data/custom_nodes` へ書き込まれません。
 - モデル・入力・出力は `comfyui` と共有しますが、ComfyUI の SQLite データベース競合を
   避けるため、Paint 側の `data/user` と `data/__manager` は専用 worktree 内に保存されます。
 - テクスチャモデルは `data/models/diffusers/hunyuan3d-paint-v2-0` または
