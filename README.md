@@ -13,7 +13,7 @@ This repo provides a Docker setup for running ComfyUI with optional TLS.
 
 ## Enabled Features (This Image)
 
-- ComfyUI `v0.33.4` (pinned release tag)
+- ComfyUI from its current upstream default branch at image-build time
 - ComfyUI Manager enabled (`--enable-manager`)
 - CUDA-enabled PyTorch runtime (PyTorch 2.9.1 + CUDA 13.0; NVIDIA GPU required for GPU acceleration)
 - SoundFile installed for audio-saving custom nodes
@@ -64,7 +64,7 @@ docker compose up --build
 Public images are published to GHCR.
 
 - Image: `ghcr.io/a2c-j1/comfyui`
-- Tags: `latest`, `v0.33.4`
+- Tag: `latest`
 
 Example:
 
@@ -158,7 +158,7 @@ Inputs go in `./data/input`, and outputs are saved to `./data/output`.
 ## Notes
 
 - If you want HTTPS, generate certs into `./certs` before starting.
-- The Dockerfile pins ComfyUI to the `v0.33.4` release tag.
+- The Dockerfile checks out ComfyUI's upstream default branch when the image is built. To force a fresh checkout instead of reusing Docker's cache, run `docker compose build --pull --no-cache` before starting the service.
 - The base image uses PyTorch 2.9.1 with CUDA 13.0 (cudnn9 runtime).
 - Verified only on Ubuntu Desktop 24.04 with an RTX 5070.
 - WSL2 has not been tested.

@@ -44,7 +44,9 @@ RUN groupadd -g 1000 appuser \
 
 WORKDIR /app
 USER appuser
-RUN git clone --depth 1 --branch v0.33.4 https://github.com/comfyanonymous/ComfyUI.git
+# Keep this runtime on ComfyUI's current upstream default branch, matching the
+# regular image.
+RUN git clone --depth 1 https://github.com/comfyanonymous/ComfyUI.git
 USER root
 WORKDIR /app/ComfyUI
 RUN --mount=type=cache,target=/root/.cache/pip \
