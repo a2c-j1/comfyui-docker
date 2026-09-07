@@ -13,9 +13,10 @@
 
 ## このイメージで有効になる機能
 
-- ComfyUI `v0.24.0`（リリースタグ固定）
+- ComfyUI `v0.33.4`（リリースタグ固定）
 - ComfyUI Manager を有効化（`--enable-manager`）
 - CUDA 対応 PyTorch ランタイム（PyTorch 2.9.1 + CUDA 13.0。GPU 利用には NVIDIA GPU が必要）
+- 音声保存系 custom node 用に SoundFile をインストール
 - `TLS_KEYFILE` / `TLS_CERTFILE` があれば HTTPS/TLS を有効化
 - ボリュームマウントでデータ永続化（`./data/*`, `./certs`）
 
@@ -62,7 +63,7 @@ docker compose up --build
 GHCR に public イメージを公開しています。
 
 - イメージ: `ghcr.io/a2c-j1/comfyui`
-- タグ: `latest`, `v0.24.0`
+- タグ: `latest`, `v0.33.4`
 
 例:
 
@@ -154,7 +155,7 @@ ComfyUI の想定構成に合わせて `./data/models` 配下へ配置してく�
 ## 注意点
 
 - HTTPS を使う場合は起動前に `./certs` に証明書を用意してください。
-- Dockerfile は ComfyUI のリリースタグ `v0.24.0` に固定しています。
+- Dockerfile は ComfyUI のリリースタグ `v0.33.4` に固定しています。
 - ベースイメージは PyTorch 2.9.1 + CUDA 13.0（cudnn9 runtime）です。
 - 動作検証は Ubuntu Desktop 24.04 + RTX-5070 のみで行っています。
 - WSL2 での動作検証は行っていません。
@@ -170,14 +171,59 @@ docker compose -f compose.hunyuan3d-paint.example.yml up -d
 ```
 
 - UI は既定で `https://localhost:8189` です。
-- 既存のカスタムノードは読み取り専用で参照し、Paintノードは専用コンテナ内だけへ追加します。
-  そのため通常の `comfyui` サービスの `data/custom_nodes` は変更されません。
+- 既存のカスタムノードは通常版と読み取り専用で共有し、Paintノードは専用コンテナ内だけへ
+  追加します。Paintノード本体は通常の `comfyui` サービスの `data/custom_nodes` へ書き込まれません。
+- モデル・入力・出力は `comfyui` と共有しますが、ComfyUI の SQLite データベース競合を
+  避けるため、Paint 側の `data/user` と `data/__manager` は専用 worktree 内に保存されます。
 - テクスチャモデルは `data/models/diffusers/hunyuan3d-paint-v2-0` または
   `hunyuan3d-paint-v2-0-turbo` に置きます。
 - RTX 5070（12 GB）ではまず Turbo モデルと小さめのテクスチャ解像度から試してください。
 
 この派生イメージはLinux向けの `custom_rasterizer` をビルドするため、初回だけ
 CUDA開発用ベースイメージの取得とコンパイルに時間がかかります。
+
+## Paint を含む単一 ComfyUI への移行
+
+通常版と Paint 版を別サービスにせず、既存の永続データを引き継いだ単一の
+`comfyui` サービスとして起動できます。Paint Wrapper はコンテナ内にだけ追加されるため、
+`data/custom_nodes` の内容は変更されません。
+
+切替前に、現在の ComfyUI を停止してください。同じ `data/user/comfyui.db` を二つの
+サービスから同時に開かないためです。
+
+```bash
+./scripts/sync_custom_nodes_for_build.sh /home/a2c/deploy/comfyui-docker/data/custom_nodes
+export COMFYUI_DATA_DIR=/home/a2c/deploy/comfyui-docker/data
+docker compose -f compose.unified-paint.example.yml up --build -d
+```
+
+この compose は既定の 8188 番と既存の `user`、Manager 設定、モデル、入力、出力を
+そのまま使います。起動後に `http://localhost:8188` を開いて確認してください。
+従来の 8189 番 Paint サービスは正常起動を確認してから停止・削除できます。
+
+## dev worktree で既存データを使う
+
+運用中の `main` を変更せずに `dev` 系の worktree でイメージを作る場合は、ビルド前に
+custom node のソースを worktree 側へ同期します。Docker のビルドコンテキストでは運用
+ディレクトリへのシンボリックリンクを使わないためです。
+
+```bash
+./scripts/sync_custom_nodes_for_build.sh /home/a2c/deploy/comfyui-docker/data/custom_nodes
+docker build -t comfyui-docker:dev-main-paint .
+docker build -f Dockerfile.hunyuan3d-paint -t comfyui-docker:dev-main-paint-hunyuan3d .
+```
+
+実行時にモデル・入出力・カスタムノードを既存データと共有するには、`COMFYUI_DATA_DIR` に
+既存の `data` ディレクトリの絶対パスを指定します。Paint 側の user / Manager 設定は
+SQLite 競合を避けるため worktree 内に分離されます。
+
+```bash
+export COMFYUI_DATA_DIR=/home/a2c/deploy/comfyui-docker/data
+docker compose -f compose.hunyuan3d-paint.example.yml up -d
+```
+
+通常版を別ポートで起動する場合は、`compose.yml.example` をコピーしてポートと
+`container_name` を変更してください。運用中の `comfyui` コンテナは停止・上書きしません。
 
 ## 上流ライセンス（ComfyUI）
 
